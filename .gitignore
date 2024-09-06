@@ -1,0 +1,6 @@
+/assets/test-audio/*
+cloudflared.deb
+/uploads/*
+/logs/*
+nohup.out
+src/gcloud_key.json
