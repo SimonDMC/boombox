@@ -32,20 +32,22 @@ MAX_DURATION = 120
 # Define terminate and exit password
 PASSWORD = "Xutv3N7VBB"
 
+# Global variable to track playback status
+is_playing = False
+
 def play_audio_file(file_path):
     """Function to play audio using ffplay asynchronously."""
-    process = subprocess.Popen(['ffplay', '-autoexit', '-nodisp', file_path],
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE)
-
-    # You can wait for some output from ffplay to confirm it's running, or you can
-    # just assume it's running once the Popen command succeeds.
-
+    global is_playing
     try:
-        # Read output to make sure the command has started
-        process.stdout.readline()  # Wait until ffplay outputs something
+        is_playing = True
+        process = subprocess.Popen(['ffplay', '-autoexit', '-nodisp', file_path],
+                                   stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE)
+        process.communicate()  # Wait for the process to complete
     except Exception as e:
         print(f"Error starting ffplay: {e}")
+    finally:
+        is_playing = False  # Mark as not playing once the audio finishes
 
 def get_audio_duration(file_path):
     """Use ffprobe to get the duration of an audio file in seconds."""
@@ -69,6 +71,11 @@ def ping():
 
 @app.route('/play-audio', methods=['POST'])
 def play_audio():
+    global is_playing
+    # Check if something is already playing
+    if is_playing:
+        return jsonify({"error": "Audio is currently playing"}), 403
+    
     # Check if an audio file is present in the request
     if 'file' not in request.files:
         return jsonify({"error": "No file part in the request"}), 400
@@ -113,6 +120,11 @@ def play_audio():
     
 @app.route('/play-text', methods=['POST'])
 def play_text():
+    global is_playing
+    # Check if something is already playing
+    if is_playing:
+        return jsonify({"error": "Audio is currently playing"}), 403
+    
     data = request.get_json()
 
     if not data['message']:
