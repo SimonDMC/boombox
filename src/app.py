@@ -38,11 +38,15 @@ PASSWORD = "Xutv3N7VBB"
 # Global variable to track playback status
 is_playing = False
 
+last_file = None
+
 def play_audio_file(file_path):
     """Function to play audio using ffplay asynchronously."""
     global is_playing
+    global last_file
     try:
         is_playing = True
+        last_file = file_path
         process = subprocess.Popen(['ffplay', '-autoexit', '-nodisp', file_path],
                                    stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE)
@@ -196,6 +200,11 @@ def play_text():
 def terminate():
     subprocess.run(['pkill', '-9', '-f', 'ffplay'])
     return "done!"
+
+@app.route('/replay-' + PASSWORD)
+def replay():
+    subprocess.run(['pkill', '-9', '-f', 'ffplay'])
+    play_audio_file(last_file)
 
 @app.route('/shutdown-' + PASSWORD)
 def shutdown():
