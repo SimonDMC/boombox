@@ -64,6 +64,23 @@ def get_audio_duration(file_path):
     except Exception as e:
         return None
 
+def is_webm(input_path):
+    result = subprocess.run(
+            ['file', input_path],
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        )
+    return "WebM" in str(result.stdout)
+
+def convert_webm_to_opus(input_path, output_path):
+    """Convert WebM file to Opus format using FFmpeg."""
+    try:
+        subprocess.run(['ffmpeg', '-i', input_path, '-c:a', 'libopus', output_path],
+                       check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"Error converting WebM to Opus: {e}")
+        return False
+
 @app.route('/')
 def root():
     return 'hello from a raspberry pi in my room :3'
@@ -97,6 +114,14 @@ def play_audio():
     filename = secure_filename(datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
     file_path = os.path.join(UPLOAD_FOLDER, filename)
     audio_file.save(file_path)
+
+    if is_webm(file_path):
+        if convert_webm_to_opus(file_path, file_path + ".ogg"):
+            os.remove(file_path)
+            file_path = file_path + ".ogg"
+            print("converting to ogg")
+        else:
+            return jsonify({"error": "Failed to convert WebM to Opus"}), 500
 
     # Check audio duration
     duration = get_audio_duration(file_path)
