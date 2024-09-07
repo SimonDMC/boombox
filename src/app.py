@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import os
 import subprocess
 import threading
@@ -7,6 +8,8 @@ from datetime import datetime
 from google.cloud import texttospeech
 
 app = Flask(__name__)
+CORS(app)
+
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'src/gcloud_key.json'
 client = texttospeech.TextToSpeechClient()
 
