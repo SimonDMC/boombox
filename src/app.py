@@ -26,11 +26,11 @@ audio_config = texttospeech.AudioConfig(
 UPLOAD_FOLDER = 'uploads/'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# Define maximum file size (in bytes) - 5 MB = 5 * 1024 * 1024 bytes
+# Define maximum file size (in bytes)
 MAX_FILE_SIZE = 5 * 1024 * 1024
 
-# Define maximum allowed duration in seconds - 2 minutes = 120 seconds
-MAX_DURATION = 120
+# Define maximum allowed duration in seconds
+MAX_DURATION = 180
 
 # Define terminate and exit password
 PASSWORD = "Xutv3N7VBB"
@@ -128,7 +128,7 @@ def play_audio():
     if duration is None:
         return jsonify({"error": "Could not determine audio duration"}), 500
     if duration > MAX_DURATION:
-        return jsonify({"error": "Audio file exceeds the 2-minute duration limit"}), 400
+        return jsonify({"error": "Audio file exceeds the 3-minute duration limit"}), 400
 
     # Start playing the audio in a separate thread
     def play_thread():
