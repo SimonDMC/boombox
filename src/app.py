@@ -32,8 +32,10 @@ MAX_FILE_SIZE = 5 * 1024 * 1024
 # Define maximum allowed duration in seconds
 MAX_DURATION = 60
 
-# Define terminate and exit password
-PASSWORD = "Xutv3N7VBB"
+# Admin panel password
+password_file = open("src/panel_password.txt", 'r')
+PASSWORD = password_file.read()
+password_file.close()
 
 OPERATIONAL_START = 9
 OPERATIONAL_END = 23

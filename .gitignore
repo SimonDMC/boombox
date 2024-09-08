@@ -4,3 +4,4 @@ cloudflared.deb
 /logs/*
 nohup.out
 src/gcloud_key.json
+src/panel_password.txt
