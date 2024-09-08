@@ -30,7 +30,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 MAX_FILE_SIZE = 5 * 1024 * 1024
 
 # Define maximum allowed duration in seconds
-MAX_DURATION = 180
+MAX_DURATION = 60
 
 # Define terminate and exit password
 PASSWORD = "Xutv3N7VBB"
@@ -132,7 +132,7 @@ def play_audio():
     if duration is None:
         return jsonify({"error": "Could not determine audio duration"}), 500
     if duration > MAX_DURATION:
-        return jsonify({"error": "Audio file exceeds the 3-minute duration limit"}), 400
+        return jsonify({"error": "Audio file exceeds the 1-minute duration limit"}), 400
 
     # Start playing the audio in a separate thread
     def play_thread():
@@ -205,6 +205,7 @@ def terminate():
 def replay():
     subprocess.run(['pkill', '-9', '-f', 'ffplay'])
     play_audio_file(last_file)
+    return "done!"
 
 @app.route('/shutdown-' + PASSWORD)
 def shutdown():
