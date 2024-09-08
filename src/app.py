@@ -35,6 +35,9 @@ MAX_DURATION = 60
 # Define terminate and exit password
 PASSWORD = "Xutv3N7VBB"
 
+OPERATIONAL_START = 9
+OPERATIONAL_END = 23
+
 # Global variable to track playback status
 is_playing = False
 
@@ -91,10 +94,15 @@ def root():
 
 @app.route('/ping')
 def ping():
+    if datetime.now().hour >= OPERATIONAL_END or datetime.now().hour < OPERATIONAL_START:
+        return jsonify({"error": "Outside of operational hours"}), 503
     return 'OK'
 
 @app.route('/play-audio', methods=['POST'])
 def play_audio():
+    if datetime.now().hour >= OPERATIONAL_END or datetime.now().hour < OPERATIONAL_START:
+        return jsonify({"error": "Outside of operational hours"}), 503
+    
     global is_playing
     # Check if something is already playing
     if is_playing:
@@ -152,6 +160,9 @@ def play_audio():
     
 @app.route('/play-text', methods=['POST'])
 def play_text():
+    if datetime.now().hour >= OPERATIONAL_END or datetime.now().hour < OPERATIONAL_START:
+        return jsonify({"error": "Outside of operational hours"}), 503
+    
     global is_playing
     # Check if something is already playing
     if is_playing:
